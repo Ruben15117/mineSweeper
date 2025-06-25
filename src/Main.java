@@ -3,7 +3,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class mineSweeper{
-    int n=5;
+    int n=15;
     int[][] field=new int[n][n];
     int[][] checkedField=new int[n][n];
     mineSweeper(){
@@ -25,7 +25,7 @@ class mineSweeper{
         for (int i=0;i<n;i++){
             for (int j = 0; j < n; j++) {
                 prob=rand.nextInt(0,100);
-                if(prob>67){
+                if(prob>70){
                     field[i][j]=-10;
                     for (int[] dir : directions) {
                         int ni = i + dir[0];
@@ -41,26 +41,30 @@ class mineSweeper{
         }
 
     }
-    void printState(){
-        System.out.print("x ");
+    void printState() {
+        System.out.print("    ");
         for (int i = 0; i < n; i++) {
-            System.out.print(" "+i+" ");
+            System.out.printf("%3d", i);
         }
-        System.out.println(" y");
+        System.out.println("  <- x");
+
         for (int i = 0; i < n; i++) {
-            System.out.print(i+" ");
-            for (int j = 0; j < n ; j++) {
-                if(checkedField[i][j]==0){
-                    System.out.print(" # ");
-                } else if (checkedField[i][j]==1) {
-                    System.out.print(" " + field[i][j] +" ");
-                }else{
+            System.out.printf("%3d", i);
+            for (int j = 0; j < n; j++) {
+                if (checkedField[i][j] == 0) {
+                    System.out.print("  #");
+                } else if (checkedField[i][j] == 1) {
+                    System.out.printf("%3d", field[i][j]);
+                } else {
                     System.out.print(" 🚩");
                 }
             }
             System.out.println();
         }
+        System.out.println(" ^");
+        System.out.println(" y");
     }
+
     List<String> readLine(String str){
         Pattern pat=Pattern.compile("\\b\\w+\\b");
         Matcher mat= pat.matcher(str);
@@ -74,8 +78,31 @@ class mineSweeper{
         lines.add("-1");
         return lines;
     }
+    void open(int x, int y){
+        if(checkedField[x][y]!=0){
+            return;
+        }
+        checkedField[x][y]=1;
+        if(field[x][y]!=0){
+            return;
+        }
+        int[][] directions = {
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+        };
+        for (int[] dir : directions) {
+            int ni = x + dir[0];
+            int nj = y + dir[1];
+
+            if (ni >= 0 && ni < n && nj >= 0 && nj < n) {
+                open(ni,nj);
+            }
+        }
+
+    }
     void play(){
         Scanner scan=new Scanner(System.in);
+
         while (true){
             boolean isCompete=true;
             for (int i = 0; i < n; i++) {
@@ -106,12 +133,12 @@ class mineSweeper{
             List<String> lines=readLine(scan.nextLine());
             int i=Integer.parseInt(lines.get(1));
             int j=Integer.parseInt(lines.get(2));
-            if(i<10 && j<10 && i>-1 && j>-1){
+            if(i<n && j<n && i>-1 && j>-1){
                 if(lines.getFirst().equals("fl")){
                     checkedField[i][j]=2;
                 }
                 else if(lines.getFirst().equals("o")){
-                    checkedField[i][j]=1;
+                    open(i,j);
                 }
                 else{
                     System.out.println("wrong input");
