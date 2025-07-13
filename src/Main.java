@@ -159,5 +159,6 @@ public class Main {
         System.out.println("input\nfl x y \nto put flag on (x,y) or \no x y\nto open x y");
         game.play();
         System.out.println("new Branch");
+        System.out.println("test");
     }
 }
